@@ -1,6 +1,35 @@
 import math
 
 
+class Sphere:
+    def __init__(self):
+        self.function = sphere
+        self.minf = -100
+        self.maxf = 100
+
+    def __str__(self):
+        return "{} {} {}".format("Sphere", self.minf, self.maxf)
+
+class Rastrigin:
+    def __init__(self):
+        self.function = rastrigin
+        self.minf = -5.12
+        self.maxf = 5.12
+
+    def __str__(self):
+        return "{} {} {}".format("Rastrigin", self.minf, self.maxf)
+
+
+class Rosenbrock:
+    def __init__(self):
+        self.function = rosenbrock
+        self.minf = -30
+        self.maxf = 30
+
+    def __str__(self):
+        return "{} {} {}".format("Rosenbrock", self.minf, self.maxf)
+
+
 def sphere(x):# Funcao Sphere
     return sum(i ** 2 for i in x)
 

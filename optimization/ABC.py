@@ -1,5 +1,4 @@
 import numpy as np
-from optimization.objective_functions import sphere, rastrigin, rosenbrock
 
 
 # This code was based on in the following references:
@@ -32,13 +31,11 @@ class ABC(object):
 
         self.gbest = None
         self.optimum_cost_tracking_iter = []
+        self.optimum_cost_tracking_eval = []
 
         self.num_fs = int(colony_size / 2)
         self.trials_limit = trials_limit
         self.food_sources = []
-
-        self.optimum_cost_tracking_eval = []
-        self.optimum_cost_tracking_iter = []
 
     @staticmethod
     def calculate_fitness(cost):
@@ -177,8 +174,9 @@ class ABC(object):
             self.scout_bee_phase()
             self.optimum_cost_tracking_iter.append(self.gbest.cost)
             print("Iteration: ", i, " Cost: ", self.gbest.cost)
-            print(self.optimum_cost_tracking_eval.__len__())
+            # print(self.optimum_cost_tracking_eval.__len__())
 
+from optimization.objective_functions import sphere, rastrigin, rosenbrock
 
 if __name__ == '__main__':
     ABC(objective_function=rosenbrock, n_iter=5000).optimize()

@@ -15,7 +15,7 @@ class Fish:
 
 
 class FSS(object):
-    def __init__(self, objective_function, n_iter=1000, n_eval=None, school_size=30, dim=30, weight_min=1,
+    def __init__(self, objective_function, n_iter=10000, n_eval=None, school_size=30, dim=30, weight_min=1,
                  step_i_init=0.1, step_i_end=0.001, step_v_init=0.01, step_v_end=0.001):
 
         self.objective_function = objective_function
@@ -47,6 +47,10 @@ class FSS(object):
         self.optimum_cost_tracking_iter = []
 
         self.school_fish = []
+        self.test = 0
+
+    def __str__(self):
+        return 'FSS'
 
     def calculate_barycenter(self):
         barycenter = np.zeros(self.dim)
@@ -62,7 +66,10 @@ class FSS(object):
 
     def _init_fish_school(self):
 
+        self.school_fish = []
         self.gbest = Fish(self.dim)
+        self.curr_weight_school = 0.0
+        self.prev_weight_school = 0.0
 
         for f in range(self.school_size):
             f = Fish(self.dim)
@@ -71,7 +78,7 @@ class FSS(object):
             f.weight = self.weight_scale / 2.0
 
             f.cost = self.objective_function.function(f.pos)
-            self.optimum_cost_tracking_eval.append(f.cost)
+            self.optimum_cost_tracking_eval.append(self.gbest.cost)
 
             self.curr_weight_school += f.weight
 
@@ -95,7 +102,7 @@ class FSS(object):
                 n_pos[n_pos > self.maxf] = self.maxf
 
             n_cost = self.objective_function.function(n_pos)
-            self.optimum_cost_tracking_eval.append(n_cost)
+            self.optimum_cost_tracking_eval.append(self.gbest.cost)
 
             if n_cost < f.cost:
                 f.delta_cost = abs(n_cost - f.cost)
@@ -117,13 +124,12 @@ class FSS(object):
         self.curr_weight_school = 0.0
 
         for f in self.school_fish:  # feeding
-
             if max_delta_cost:
                 f.weight = f.weight + (f.delta_cost / max_delta_cost)
                 if f.weight < self.weight_min:
                     f.weight = self.weight_min
 
-            self.curr_weight_school += f.weight #update school weight
+            self.curr_weight_school += f.weight  # update school weight
 
     def _mov_col_ins(self):
         cost_eval_enhanced = np.zeros(self.dim)
@@ -149,6 +155,9 @@ class FSS(object):
     def _mov_col_vol(self):
         barycenter = self.calculate_barycenter()
 
+        if self.curr_weight_school < self.prev_weight_school:
+            self.test += 1
+
         for f in self.school_fish:
             rand = np.random.uniform(0, 1, self.dim)
             if self.curr_weight_school > self.prev_weight_school:
@@ -162,8 +171,7 @@ class FSS(object):
                 new_pos[new_pos > self.maxf] = self.maxf
 
             f.cost = self.objective_function.function(new_pos)
-            self.optimum_cost_tracking_eval.append(f.cost)
-
+            self.optimum_cost_tracking_eval.append(self.gbest.cost)
             f.pos = new_pos
 
             if f.cost < self.gbest.cost:
@@ -194,14 +202,11 @@ class FSS(object):
             self._update_step(tracking.__len__(), range_sim)
 
             self.optimum_cost_tracking_iter.append(self.gbest.cost)
-            print("{} --- tracking: {} cost: {}".format(self.objective_function.__str__(), tracking.__len__(), self.gbest.cost))
+            # print("{} --- tracking: {} cost: {}".format(self.objective_function.__str__(), tracking.__len__(),
+            # self.gbest.cost))
 
 
 from optimization.objective_functions import Sphere, Rastrigin, Rosenbrock
 
 if __name__ == '__main__':
-    # FSS(objective_function=Sphere(), n_eval=500000).optimize()
-    FSS(objective_function=Rastrigin(), n_eval=500000).optimize()
-    # FSS(objective_function=Rosenbrock(), n_eval=500000).optimize()
-
-
+    FSS(objective_function=Sphere(), n_eval=500000).optimize()

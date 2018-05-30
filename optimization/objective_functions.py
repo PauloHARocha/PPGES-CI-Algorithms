@@ -10,6 +10,7 @@ class Sphere:
     def __str__(self):
         return "{} {} {}".format("Sphere", self.minf, self.maxf)
 
+
 class Rastrigin:
     def __init__(self):
         self.function = rastrigin
@@ -30,13 +31,13 @@ class Rosenbrock:
         return "{} {} {}".format("Rosenbrock", self.minf, self.maxf)
 
 
-def sphere(x):# Funcao Sphere
+def sphere(x):  # Funcao Sphere
     return sum(i ** 2 for i in x)
 
 
-def rastrigin(x):# Funcao Rastrigin
+def rastrigin(x):  # Funcao Rastrigin
     return 10 * len(x) + sum((i ** 2) - 10 * math.cos(2 * math.pi * i) for i in x)
 
 
-def rosenbrock(x):# Funcao Rosenbrock
-    return sum(100 * ((x[i+1] - x[i] ** 2) ** 2) + (x[i] - 1) ** 2 for i in range(len(x)-1))
+def rosenbrock(x):  # Funcao Rosenbrock
+    return sum(100 * ((x[i + 1] - x[i] ** 2) ** 2) + (x[i] - 1) ** 2 for i in range(len(x) - 1))

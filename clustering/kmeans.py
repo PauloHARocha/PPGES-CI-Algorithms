@@ -1,7 +1,7 @@
 import numpy as np
 
 
-class k_means:
+class KMeans:
 
     def __init__(self, k=4, n_iter=300, tol=0.00001, data=None):
         self.k = k  # Number of centroids
@@ -32,12 +32,12 @@ class k_means:
                 self.clusters[k] = []  # For each k, create an array
 
             for xi in self.data:  # Atribute each data on dataset to one of the centroids, based on the distance
-                dist = [np.linalg.norm(xi - self.centroids[c]) for c in self.centroids]
-                class_ = dist.index(min(dist))
-                self.clusters[class_].append(xi)
+                dist = [np.linalg.norm(xi - self.centroids[c]) for c in self.centroids] #calculate the distance from data to each centroid
+                class_ = dist.index(min(dist)) # get the centroid index that has the minimun distance from data
+                self.clusters[class_].append(xi) # append the data to the cluster of the centroid
 
             old_centroids = dict(self.centroids)
-            for k in self.clusters:  # Update the position of each cluster based on the average distance from each data of the cluster
+            for k in self.clusters:  # Update the position of each centroid based on the average distance from each data of the centroid
                 if len(self.clusters[k]) > 0:
                     self.centroids[k] = np.average(self.clusters[k], axis=0)
 
@@ -51,13 +51,13 @@ class k_means:
             if is_done:
                 break
 
-    def predict(self):
-        if len(self.data.shape) > 1:
+    def predict(self, x):
+        if len(x.shape) > 1:
             class_ = []
             for c in self.centroids:
-                class_.append(np.sum((self.data - self.centroids[c]) ** 2, axis=1))
+                class_.append(np.sum((x - self.centroids[c]) ** 2, axis=1))
             return np.argmin(np.array(class_).T, axis=1)
         else:
-            dist = [np.linalg.norm(self.data - self.centroids[c]) for c in self.centroids]
+            dist = [np.linalg.norm(x - self.centroids[c]) for c in self.centroids]
             class_ = dist.index(min(dist))
             return class_

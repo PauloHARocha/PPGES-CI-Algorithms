@@ -20,14 +20,15 @@ class FoodSource(object):
 
 
 class ABC(object):
-    def __init__(self, objective_function, n_iter=1000, colony_size=30, trials_limit=100):
+    def __init__(self, objective_function, n_iter=1000, n_eval=None, dim=30, colony_size=30, trials_limit=100):
 
-        self.objective_function = objective_function
+        self.objective_function = objective_function.function
 
-        self.dim = 30
-        self.minf = -100
-        self.maxf = 100
+        self.dim = dim
+        self.minf = objective_function.minf
+        self.maxf = objective_function.maxf
         self.n_iter = n_iter
+        self.n_eval = n_eval
 
         self.gbest = None
         self.optimum_cost_tracking_iter = []
@@ -36,6 +37,9 @@ class ABC(object):
         self.num_fs = int(colony_size / 2)
         self.trials_limit = trials_limit
         self.food_sources = []
+
+    def __str__(self):
+        return 'ABC'
 
     @staticmethod
     def calculate_fitness(cost):
@@ -68,6 +72,7 @@ class ABC(object):
         return fs
 
     def init_colony(self):
+        self.food_sources = []
         self.gbest = FoodSource(self.dim)
         self.gbest.cost = np.inf
 
@@ -83,7 +88,8 @@ class ABC(object):
 
     def employed_bee_phase(self):
         for fs in range(self.num_fs):
-            k = range(self.num_fs)
+            k = list(range(self.num_fs))
+            k.remove(fs)
             k = np.random.choice(np.array(k))
             j = np.random.choice(range(self.dim))
             phi = np.random.uniform(-1, 1)
@@ -117,9 +123,8 @@ class ABC(object):
             if r < self.food_sources[s].prob:
                 t += 1
 
-                k = range(self.num_fs)
-                # k = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,14]
-                # k.remove(s)
+                k = list(range(self.num_fs))
+                k.remove(s)
                 k = np.random.choice(np.array(k))
                 j = np.random.choice(range(self.dim))
                 phi = np.random.uniform(-1, 1)
@@ -154,7 +159,6 @@ class ABC(object):
         max_ = self.get_max_trial()
 
         if self.food_sources[max_].trials >= self.trials_limit:
-            print('scout')
             rand = np.random.random(self.dim)
             pos = self.minf + rand * (self.maxf - self.minf)
             self.food_sources[max_] = self.init_fs(pos)
@@ -166,17 +170,26 @@ class ABC(object):
         self.init_colony()
         self.update_best_solution()
 
-        for i in range(self.n_iter):
+        range_sim = self.n_iter
+        tracking = self.optimum_cost_tracking_iter
+
+        if self.n_eval is not None:
+            range_sim = self.n_eval
+            tracking = self.optimum_cost_tracking_eval
+
+        while tracking.__len__() < range_sim:
             self.employed_bee_phase()
             self.calculate_probabilities()
             self.onlooker_bee_phase()
             self.update_best_solution()
             self.scout_bee_phase()
             self.optimum_cost_tracking_iter.append(self.gbest.cost)
-            print("Iteration: ", i, " Cost: ", self.gbest.cost)
-            # print(self.optimum_cost_tracking_eval.__len__())
+            print('{} - {} - {}'.format(self.optimum_cost_tracking_iter.__len__(),
+                                        self.optimum_cost_tracking_eval.__len__(),
+                                        self.gbest.cost))
 
-from optimization.objective_functions import sphere, rastrigin, rosenbrock
+
+from optimization.objective_functions import Sphere, Rastrigin, Rosenbrock
 
 if __name__ == '__main__':
-    ABC(objective_function=rosenbrock, n_iter=5000).optimize()
+    ABC(objective_function=Sphere(), n_iter=5000, n_eval=30000).optimize()

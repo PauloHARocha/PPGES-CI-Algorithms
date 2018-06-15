@@ -14,7 +14,7 @@ class Particle:
 class PSO:
     def __init__(self, objective_function, dim=30, swarm_size=30, n_iter=10000, n_eval=None, lo_w=0.4, up_w=0.9, c1=2.05,
                  c2=2.05,
-                 v_max=100):
+                 v_max=10):
         self.dim = dim
         self.min_p_range = objective_function.minf
         self.max_p_range = objective_function.maxf
@@ -84,12 +84,11 @@ class PSO:
             tracking = self.optimum_cost_tracking_eval
 
         while tracking.__len__() < range_sim:
-            # swarm_pos = []
+
             for p in self.swarm:
                 r1 = np.random.random(len(p.speed))
                 r2 = np.random.random(len(p.speed))
-                p.speed = self.w * p.speed + self.c1 * r1 * (p.pbest_pos - p.pos) \
-                          + self.c1 * r2 * (self.gbest.pos - p.pos)
+                p.speed = self.w * np.array(p.speed) + self.c1 * r1 * (p.pbest_pos - p.pos) + self.c1 * r2 * (self.gbest.pos - p.pos)
 
                 # Limit the velocity of the particle
                 p.speed = np.sign(p.speed) * np.minimum(np.absolute(p.speed), np.ones(self.dim) * self.v_max)
@@ -117,13 +116,14 @@ class PSO:
                 self.w = self.up_w - (float(tracking.__len__()) / range_sim) * (self.up_w - self.lo_w)
 
             self.optimum_cost_tracking_iter.append(self.gbest.cost)
-            # print('{} - {} - {}'.format(self.optimum_cost_tracking_iter.__len__(),
-            #                             self.optimum_cost_tracking_eval.__len__(),
-            #                             self.gbest_p.cost))
+            print('{} - {} - {}'.format(self.optimum_cost_tracking_iter.__len__(),
+                                            self.optimum_cost_tracking_eval.__len__(),
+                                            self.gbest.cost))
 
 
 from optimization.objective_functions import Sphere, Rastrigin, Rosenbrock
 
 if __name__ == '__main__':
-    PSO(objective_function=Sphere(), n_iter=5000, n_eval=3000).optimize()
+    # PSO(objective_function=Rosenbrock(), n_iter=10000).optimize()
+    PSO(objective_function=Rastrigin(), n_iter=10000).optimize()
 

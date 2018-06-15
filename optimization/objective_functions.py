@@ -40,4 +40,4 @@ def rastrigin(x):  # Funcao Rastrigin
 
 
 def rosenbrock(x):  # Funcao Rosenbrock
-    return sum(100 * ((x[i + 1] - x[i] ** 2) ** 2) + (x[i] - 1) ** 2 for i in range(len(x) - 1))
+    return sum(100 * ((x[i + 1] - x[i] ** 2) ** 2) + (x[i] - 1) ** 2 for i in range(1, len(x) - 1))

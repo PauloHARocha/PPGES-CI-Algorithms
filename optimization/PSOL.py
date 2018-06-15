@@ -107,7 +107,7 @@ class PSOL:
 
                 r1 = np.random.random(len(p.speed))
                 r2 = np.random.random(len(p.speed))
-                p.speed = self.w * p.speed + self.c1 * r1 * (p.pbest_pos - p.pos) \
+                p.speed = self.w * np.array(p.speed) + self.c1 * r1 * (p.pbest_pos - p.pos) \
                           + self.c1 * r2 * (p.lbest_pos - p.pos)
 
                 # Limit the velocity of the particle
@@ -148,13 +148,14 @@ class PSOL:
                 self.w = self.up_w - (float(tracking.__len__()) / range_sim) * (self.up_w - self.lo_w)
 
             self.optimum_cost_tracking_iter.append(self.gbest.cost)
-            # print('{} - {} - {} - {}'.format(self.optimum_cost_tracking_iter.__len__(),
-            #                             self.optimum_cost_tracking_eval.__len__(),
-            #                             self.gbest.cost, self.w))
+            print('{} - {} - {} - {}'.format(self.optimum_cost_tracking_iter.__len__(),
+                                         self.optimum_cost_tracking_eval.__len__(),
+                                         self.gbest.cost, self.w))
 
 
 from optimization.objective_functions import Sphere, Rastrigin, Rosenbrock
 
 if __name__ == '__main__':
-    PSOL(objective_function=Rosenbrock(), n_iter=10000).optimize()
+    # PSOL(objective_function=Rosenbrock(), n_iter=10000).optimize()
+    PSOL(objective_function=Rastrigin(), n_iter=10000).optimize()
 

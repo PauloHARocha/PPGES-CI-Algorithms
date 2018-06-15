@@ -61,3 +61,39 @@ class Metrics:
                 if min_D > x:
                     min_D = x
         return min_D
+
+    @staticmethod
+    def inter_cluster_statistic(centroids):
+        centers = []
+        # cluster = len(centroids)
+        for c in centroids:
+            centers.append(centroids[c])
+        centers = np.array(centers, dtype=float)
+        centers = distance.pdist(centers, metric='sqeuclidean')
+        centers = distance.squareform(centers)
+        centers = sum(np.array(centers, dtype=np.float64).ravel())
+        # centers = (1.0 / cluster) * (1.0 / (cluster - 1)) * centers
+        return centers
+
+    @staticmethod
+    def intra_cluster_statistic(data, centroids):
+        # minimization
+        clusters = {}
+        for k in centroids:
+            clusters[k] = []
+
+        for xi in data:
+            dist = [np.linalg.norm(xi - centroids[c]) for c in centroids]
+            class_ = dist.index(min(dist))
+            clusters[class_].append(xi)
+
+        inter_cluster_sum = 0.0
+        for c in centroids:
+            if len(clusters[c]) > 0:
+                for point in clusters[c]:
+                    inter_cluster_sum += np.linalg.norm(point - centroids[c])
+        return inter_cluster_sum
+
+    @staticmethod
+    def variance_based_ch(data, centroids):
+        return truediv(len(data) - len(centroids), len(centroids) - 1) * truediv(Metrics.inter_cluster_statistic(centroids), Metrics.intra_cluster_statistic(data,centroids))

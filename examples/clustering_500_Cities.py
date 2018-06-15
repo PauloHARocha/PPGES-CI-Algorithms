@@ -7,6 +7,8 @@ from tqdm import tqdm
 from clustering.metrics import Metrics
 from clustering.kmeans import KMeans
 from clustering.FCmeans import FCMeans
+from clustering.PSOC import PSOC
+from clustering.ABCC import ABCC
 
 
 def main():
@@ -21,12 +23,12 @@ def main():
     std = MinMaxScaler()
     X = std.fit_transform(X)
 
-    techniques = ['k_means', 'FC_means'] #PSOC, ABCC
+    techniques = ['k_means', 'FC_means', 'PSOC', 'ABCC']
     metrics = ['gap', 'silhouete', 'calinskiHarabaszIndex']
-    num_exec = 2
+    num_exec = 30
 
     for tec in techniques:
-        rng = range(2, 4)
+        rng = range(2, 15)
         met_eval = []
         for met in metrics:
             mean = []
@@ -38,6 +40,10 @@ def main():
                         clf = KMeans(k=k)
                     elif tec == 'FC_means':
                         clf = FCMeans(k=k)
+                    elif tec == 'PSOC':
+                        clf = PSOC(n_clusters=k)
+                    elif tec == 'ABCC':
+                        clf = ABCC(n_clusters=k)
 
                     clf.fit(data=X) #run technique
 

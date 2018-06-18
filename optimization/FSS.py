@@ -202,8 +202,9 @@ class FSS(object):
             self._update_step(tracking.__len__(), range_sim)
 
             self.optimum_cost_tracking_iter.append(self.gbest.cost)
-            # print("{} --- tracking: {} cost: {}".format(self.objective_function.__str__(), tracking.__len__(),
-            # self.gbest.cost))
+            print('{} - {} - {}'.format(self.optimum_cost_tracking_iter.__len__(),
+                                            self.optimum_cost_tracking_eval.__len__(),
+                                            self.gbest.cost))
 
 
 from optimization.objective_functions import Sphere, Rastrigin, Rosenbrock

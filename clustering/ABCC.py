@@ -19,22 +19,32 @@ class ABCCObjectiveFunction:
             clusters[k] = []
 
         for xi in self.data:
-            dist = [(np.linalg.norm(xi - centroids[c])) for c in range(len(centroids))]
+            # dist = [(np.linalg.norm(xi - centroids[c])**2) for c in range(len(centroids))]
+            dist = [squared_euclidean_dist(xi, centroids[c]) for c in range(len(centroids))]
             class_ = dist.index(min(dist))
             clusters[class_].append(xi)
 
-        # sse
-        global_intra_cluster_sum = 0.0
-        for c in range(len(centroids)):
-            partial_intra_cluster_sum = 0.0
+        return sse(centroids, clusters)
 
-            if len(clusters[c]) > 0:
-                for point in clusters[c]:
-                    partial_intra_cluster_sum += sum([(np.linalg.norm(point - centroids[c]) ** 2) for c in range(len(centroids))])
 
-            global_intra_cluster_sum += partial_intra_cluster_sum
+def sse(centroids, clusters):
+    global_intra_cluster_sum = 0.0
 
-        return global_intra_cluster_sum
+    for c in range(len(centroids)):
+        partial_intra_cluster_sum = 0.0
+
+        if len(clusters[c]) > 0:
+            for point in clusters[c]:
+                partial_intra_cluster_sum += (squared_euclidean_dist(point, centroids[c]))
+
+        global_intra_cluster_sum += partial_intra_cluster_sum
+
+    return global_intra_cluster_sum
+
+
+def squared_euclidean_dist(u, v):
+    sed = ((u - v) ** 2).sum()
+    return sed
 
 
 class ABCC(object):

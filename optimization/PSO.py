@@ -105,11 +105,11 @@ class PSO:
                 p.cost = self.objective_function(p.pos)
                 self.optimum_cost_tracking_eval.append(self.gbest.cost)
 
-                if p.cost <= p.pbest_cost:
+                if p.cost < p.pbest_cost:
                     p.pbest_pos = p.pos
                     p.pbest_cost = p.cost
 
-                if p.pbest_cost <= self.gbest.cost:
+                if p.pbest_cost < self.gbest.cost:
                     self.gbest.pos = p.pbest_pos
                     self.gbest.cost = p.pbest_cost
 

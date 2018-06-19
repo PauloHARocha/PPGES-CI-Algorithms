@@ -116,9 +116,9 @@ class PSO:
                 self.w = self.up_w - (float(tracking.__len__()) / range_sim) * (self.up_w - self.lo_w)
 
             self.optimum_cost_tracking_iter.append(self.gbest.cost)
-            print('{} - {} - {}'.format(self.optimum_cost_tracking_iter.__len__(),
-                                            self.optimum_cost_tracking_eval.__len__(),
-                                            self.gbest.cost))
+            # print('{} - {} - {}'.format(self.optimum_cost_tracking_iter.__len__(),
+            #                                 self.optimum_cost_tracking_eval.__len__(),
+            #                                 self.gbest.cost))
 
 
 from optimization.objective_functions import Sphere, Rastrigin, Rosenbrock

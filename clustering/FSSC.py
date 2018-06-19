@@ -48,11 +48,10 @@ def squared_euclidean_dist(u, v):
 
 
 class FSSC(object):
-    def __init__(self, n_clusters=2, swarm_size=50, n_iter=20, trials_limit=100):
+    def __init__(self, n_clusters=2, swarm_size=50, n_iter=50):
         self.n_clusters = n_clusters
         self.swarm_size = swarm_size
         self.n_iter = n_iter
-        self.trials_limit = trials_limit
         self.weight_min = 1
         self.step_i_init = 0.1
         self.step_i_end = 0.001

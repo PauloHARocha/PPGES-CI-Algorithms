@@ -184,9 +184,9 @@ class ABC(object):
             self.update_best_solution()
             self.scout_bee_phase()
             self.optimum_cost_tracking_iter.append(self.gbest.cost)
-            print('{} - {} - {}'.format(self.optimum_cost_tracking_iter.__len__(),
-                                        self.optimum_cost_tracking_eval.__len__(),
-                                        self.gbest.cost))
+            # print('{} - {} - {}'.format(self.optimum_cost_tracking_iter.__len__(),
+            #                             self.optimum_cost_tracking_eval.__len__(),
+            #                             self.gbest.cost))
 
 
 from optimization.objective_functions import Sphere, Rastrigin, Rosenbrock

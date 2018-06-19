@@ -48,7 +48,7 @@ def squared_euclidean_dist(u, v):
 
 
 class PSOC(object):
-    def __init__(self, n_clusters=2, swarm_size=100, n_iter=20, lo_w=0.72, up_w=0.9, c1=1.49,
+    def __init__(self, n_clusters=2, swarm_size=50, n_iter=50, lo_w=0.72, up_w=0.9, c1=1.49,
                  c2=1.49):
         self.n_clusters = n_clusters
         self.swarm_size = swarm_size

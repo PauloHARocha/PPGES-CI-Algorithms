@@ -57,7 +57,8 @@ class Metrics:
                 x = 0.0
                 for d_out in range(len(clusters[k])):
                     x += distance.euclidean(datum, clusters[k][d_out])
-                x = truediv(x, len(clusters[k]))
+                if len(clusters[k]) > 0:
+                    x = truediv(x, len(clusters[k]))
                 if min_D > x:
                     min_D = x
         return min_D

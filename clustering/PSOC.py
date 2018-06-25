@@ -75,6 +75,8 @@ class PSOC(object):
         self.centroids = {}
         raw_centroids = self.pso.gbest.pos.reshape((self.n_clusters, self.n_attributes))
 
+        self.convergence = self.pso.optimum_cost_tracking_iter
+
         for c in range(len(raw_centroids)):
             self.centroids[c] = raw_centroids[c]
 

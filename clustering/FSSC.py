@@ -73,6 +73,8 @@ class FSSC(object):
         self.centroids = {}
         raw_centroids = self.fss.gbest.pos.reshape((self.n_clusters, self.n_attributes))
 
+        self.convergence = self.fss.optimum_cost_tracking_iter
+
         for c in range(len(raw_centroids)):
             self.centroids[c] = raw_centroids[c]
 

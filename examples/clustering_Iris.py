@@ -24,15 +24,16 @@ def main():
     # techniques = ['k_means', 'FC_means', 'PSOC', 'ABCC', 'FSSC']
     techniques = ['ABCC', 'FSSC', 'PSOC']
     metrics = ['silhouete', 'calinskiHarabaszIndex', 'gap']
-    num_exec = 20 #30
+    num_exec = 2 #30
 
     for tec in techniques:
-        rng = range(2, 6) #2-16
+        rng = range(2, 3) #2-16
 
         mean = {}
         std = {}
         dff = {}
         met_eval = {}
+        convergence = []
         for met in metrics: #initialize
             mean[met] = list()
             std[met] = list()
@@ -46,13 +47,15 @@ def main():
                 elif tec == 'FC_means':
                     clf = FCMeans(k=k)
                 elif tec == 'PSOC':
-                    clf = PSOC(n_clusters=k, n_iter=20, swarm_size=50)
+                    clf = PSOC(n_clusters=k, n_iter=10, swarm_size=50)
                 elif tec == 'ABCC':
-                    clf = ABCC(n_clusters=k, n_iter=20, swarm_size=50)
+                    clf = ABCC(n_clusters=k, n_iter=10, swarm_size=50)
                 elif tec == 'FSSC':
-                    clf = FSSC(n_clusters=k, n_iter=20, swarm_size=50)
+                    clf = FSSC(n_clusters=k, n_iter=10, swarm_size=50)
 
                 clf.fit(data=X) #run technique
+                if tec in ['ABCC', 'FSSC', 'PSOC']:
+                    convergence.append(np.array(clf.convergence))
 
                 for met in metrics:
 
@@ -94,6 +97,22 @@ def main():
                 std[met].append(np.std(met_eval[met]))
                 dff[met].append([tec, k, np.mean(met_eval[met]), np.std(met_eval[met])])
                 met_eval[met] = list()
+
+            # convergence
+            if tec in ['ABCC', 'FSSC', 'PSOC']:
+                print(np.mean(convergence, axis=0))
+                plt.figure()
+                figure_name = "results_Iris/booking/algorithm_{}/convergence.png".format(tec)
+                plt.title('{} - Convergence'.format(tec))
+                plt.plot(np.mean(convergence, axis=0))
+                plt.xlabel('Iterations')
+                plt.ylabel('Fitness')
+                plt.tight_layout()
+                plt.savefig(figure_name)
+
+                save_name = "results_Iris/booking/algorithm_{}/convergence.csv".format(tec)
+                pd.DataFrame(convergence).to_csv(save_name)
+                convergence = []
 
         for met in metrics:
             plt.figure()

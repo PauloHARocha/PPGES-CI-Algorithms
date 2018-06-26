@@ -38,7 +38,8 @@ class Metrics:
                 max_a_b = bi
                 if ai > bi:
                     max_a_b = ai
-                sil += truediv(bi - ai, max_a_b)
+                if max_a_b > 0:
+                    sil += truediv(bi - ai, max_a_b)
         return truediv(sil, len_data)
 
     @staticmethod

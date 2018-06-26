@@ -48,15 +48,17 @@ def squared_euclidean_dist(u, v):
 
 
 class FSSC(object):
-    def __init__(self, n_clusters=2, swarm_size=50, n_iter=50):
+    def __init__(self, wheight_scale=None, n_clusters=2, swarm_size=50, n_iter=50,
+                 step_i_init=0.1, step_i_end=0.001, step_v_init=0.01, step_v_end=0.001):
         self.n_clusters = n_clusters
         self.swarm_size = swarm_size
         self.n_iter = n_iter
         self.weight_min = 1
-        self.step_i_init = 0.1
-        self.step_i_end = 0.001
-        self.step_v_init = 0.01
-        self.step_v_end = 0.001
+        self.step_i_init = step_i_init
+        self.step_i_end = step_i_end
+        self.step_v_init = step_v_init
+        self.step_v_end = step_v_end
+        self.weight_scale = wheight_scale
 
     def fit(self, data):
 
@@ -66,7 +68,7 @@ class FSSC(object):
                        dim=self.n_clusters * self.n_attributes, school_size=self.swarm_size,
                        n_iter=self.n_iter, weight_min=self.weight_min, step_i_init=self.step_i_init,
                        step_i_end=self.step_i_end, step_v_init=self.step_v_init, step_v_end=self.step_v_end
-                       )
+                       , wheight_scale=self.weight_scale)
 
         self.fss.optimize()
 

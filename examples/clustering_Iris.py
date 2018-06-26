@@ -22,12 +22,12 @@ def main():
     X = std.fit_transform(X)
 
     # techniques = ['k_means', 'FC_means', 'PSOC', 'ABCC', 'FSSC']
-    techniques = ['ABCC', 'FSSC', 'PSOC']
-    metrics = ['silhouete', 'calinskiHarabaszIndex', 'gap']
-    num_exec = 2 #30
+    techniques = ['ABCC', 'PSOC', 'FSSC', 'FSSC-2', 'FSSC-3']
+    metrics = ['silhouete', 'calinskiHarabaszIndex']#, 'gap']
+    num_exec = 30 #30
 
     for tec in techniques:
-        rng = range(2, 3) #2-16
+        rng = range(3, 4) #2-16
 
         mean = {}
         std = {}
@@ -47,11 +47,16 @@ def main():
                 elif tec == 'FC_means':
                     clf = FCMeans(k=k)
                 elif tec == 'PSOC':
-                    clf = PSOC(n_clusters=k, n_iter=10, swarm_size=50)
+                    clf = PSOC(n_clusters=k, n_iter=100, swarm_size=50)
                 elif tec == 'ABCC':
-                    clf = ABCC(n_clusters=k, n_iter=10, swarm_size=50)
+                    clf = ABCC(n_clusters=k, n_iter=100, swarm_size=50)
                 elif tec == 'FSSC':
-                    clf = FSSC(n_clusters=k, n_iter=10, swarm_size=50)
+                    clf = FSSC(n_clusters=k, n_iter=100, swarm_size=50)
+                elif tec == 'FSSC-2':
+                    clf = FSSC(n_clusters=k, n_iter=100, swarm_size=50,
+                               step_i_init=0.1, step_i_end=0.001, step_v_init=0.02, step_v_end=0.002)
+                elif tec == 'FSSC-3':
+                    clf = FSSC(n_clusters=k, n_iter=100, swarm_size=50, wheight_scale=10)
 
                 clf.fit(data=X) #run technique
                 if tec in ['ABCC', 'FSSC', 'PSOC']:
@@ -100,9 +105,11 @@ def main():
 
             # convergence
             if tec in ['ABCC', 'FSSC', 'PSOC']:
-                print(np.mean(convergence, axis=0))
+                out_dir = "results_Iris/booking/algorithm_{}/convergence/".format(tec)  # create folder
+                if not os.path.exists(out_dir):
+                    os.makedirs(out_dir)
                 plt.figure()
-                figure_name = "results_Iris/booking/algorithm_{}/convergence.png".format(tec)
+                figure_name = out_dir + "convergence_k_{}.png".format(k)
                 plt.title('{} - Convergence'.format(tec))
                 plt.plot(np.mean(convergence, axis=0))
                 plt.xlabel('Iterations')
@@ -110,7 +117,7 @@ def main():
                 plt.tight_layout()
                 plt.savefig(figure_name)
 
-                save_name = "results_Iris/booking/algorithm_{}/convergence.csv".format(tec)
+                save_name = out_dir + "convergence_k_{}.csv".format(k)
                 pd.DataFrame(convergence).to_csv(save_name)
                 convergence = []
 

@@ -15,7 +15,7 @@ class Fish:
 
 
 class FSS(object):
-    def __init__(self, objective_function, n_iter=10000, n_eval=None, school_size=30, dim=30, weight_min=1,
+    def __init__(self, objective_function, wheight_scale=None, n_iter=10000, n_eval=None, school_size=30, dim=30, weight_min=1,
                  step_i_init=0.1, step_i_end=0.001, step_v_init=0.01, step_v_end=0.001):
 
         self.objective_function = objective_function
@@ -28,8 +28,10 @@ class FSS(object):
         self.school_size = school_size
 
         self.weight_min = weight_min
-        self.weight_scale = self.n_iter
-
+        if wheight_scale is not None:
+            self.weight_scale = wheight_scale#self.n_iter
+        else:
+            self.weight_scale = self.n_iter
         self.prev_weight_school = 0.0
         self.curr_weight_school = 0.0
 

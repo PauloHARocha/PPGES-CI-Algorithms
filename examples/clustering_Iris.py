@@ -16,13 +16,14 @@ from clustering.FSSC import FSSC
 def main():
     iris = datasets.load_iris()
     X = iris.data[:, :]
+    species = iris.target
 
     # Normalize the dimension value to a float value with range 0 - 1
     std = MinMaxScaler()
     X = std.fit_transform(X)
 
     # techniques = ['k_means', 'FC_means', 'PSOC', 'ABCC', 'FSSC']
-    techniques = ['ABCC', 'PSOC', 'FSSC', 'FSSC-2', 'FSSC-3']
+    techniques = ['ABCC']#, 'PSOC', 'FSSC', 'FSSC-2', 'FSSC-3']
     metrics = ['silhouete', 'calinskiHarabaszIndex']#, 'gap']
     num_exec = 30 #30
 
@@ -49,7 +50,7 @@ def main():
                 elif tec == 'PSOC':
                     clf = PSOC(n_clusters=k, n_iter=100, swarm_size=50)
                 elif tec == 'ABCC':
-                    clf = ABCC(n_clusters=k, n_iter=100, swarm_size=50)
+                    clf = ABCC(n_clusters=k, n_iter=100, swarm_size=50, trials_limit=10)
                 elif tec == 'FSSC':
                     clf = FSSC(n_clusters=k, n_iter=100, swarm_size=50)
                 elif tec == 'FSSC-2':
@@ -73,16 +74,37 @@ def main():
                     save_centroids = save_centroids.transpose()
                     save_centroids.to_csv(file_name)
 
-                    clusters_file = open(out_dir + "{}_k_{}_exec_{}.csv".format('clusters', k, j), 'w')#save clusters
+                    clusters = {}
+                    for c in clf.centroids:
+                        clusters[c] = []
+
+                    for xi in range(len(X)):
+                        dist = [np.linalg.norm(X[xi] - clf.centroids[c]) for c in clf.centroids]
+                        class_ = dist.index(min(dist))
+                        data = np.append(X[xi], species[xi])
+                        clusters[class_].append(data)
+
+                    clusters_file = open(out_dir + "{}_k_{}_exec_{}.csv".format('clusters', k, j), 'w')  # save clusters
                     clusters_file.write(str(len(clf.centroids)) + '\n')
                     for c in range(len(clf.centroids)):
-                        clusters_file.write(str(len(clf.clusters[c])) + '\n')
-                        for xi in range(len(clf.clusters[c])):
-                            clusters_file.write(str(clf.clusters[c][xi][0]))
-                            for xij in range(1, len(clf.clusters[c][xi])):
-                                clusters_file.write(' ' + str(clf.clusters[c][xi][xij]))
+                        clusters_file.write(str(len(clusters[c])) + '\n')
+                        for xi in range(len(clusters[c])):
+                            clusters_file.write(str(clusters[c][xi][0]))
+                            for xij in range(1, len(clusters[c][xi])):
+                                clusters_file.write(' ' + str(clusters[c][xi][xij]))
                             clusters_file.write('\n')
                     clusters_file.close()
+
+                    # clusters_file = open(out_dir + "{}_k_{}_exec_{}.csv".format('clusters', k, j), 'w')#save clusters
+                    # clusters_file.write(str(len(clf.centroids)) + '\n')
+                    # for c in range(len(clf.centroids)):
+                    #     clusters_file.write(str(len(clf.clusters[c])) + '\n')
+                    #     for xi in range(len(clf.clusters[c])):
+                    #         clusters_file.write(str(clf.clusters[c][xi][0]))
+                    #         for xij in range(1, len(clf.clusters[c][xi])):
+                    #             clusters_file.write(' ' + str(clf.clusters[c][xi][xij]))
+                    #         clusters_file.write('\n')
+                    # clusters_file.close()
 
                     if met == 'silhouete':
                         met_eval[met].append(Metrics.silhouette(clf.clusters, len(X)))
